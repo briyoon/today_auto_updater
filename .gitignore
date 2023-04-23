@@ -1,0 +1,11 @@
+# secrets
+.env
+
+# virtual enviroment
+venv/
+
+# ide
+.vscode
+
+# resources for now as im still figuring out how everything goes together
+resources/
