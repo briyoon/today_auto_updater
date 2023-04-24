@@ -4,8 +4,15 @@
 # virtual enviroment
 venv/
 
+# cahce
+__pycache__/
+
 # ide
 .vscode
+
+# logs
+logs/
+*.log
 
 # resources for now as im still figuring out how everything goes together
 resources/
