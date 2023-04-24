@@ -1,42 +1,44 @@
-import asyncio
-from pyppeteer import launch
-from random import uniform
 import time
+from playwright.sync_api import sync_playwright
+from random import uniform
 
-async def type_like_human(page, selector, text):
-    await page.focus(selector)
+def type_like_human(page, selector, text):
+    element = page.locator(selector)
+    element.click()
     for char in text:
-        await page.keyboard.type(char)
-        await asyncio.sleep(uniform(0.1, 0.4)) # Simulate random typing speed
+        element.type(char)
+        time.sleep(uniform(0.1, 0.4)) # Simulate random typing speed
 
-async def main():
-    browser = await launch(headless=False)
-    page = await browser.newPage()
+def cognitive_delay():
+    time.sleep(uniform(0.5, 1.5))
 
-    # Set user agent to make it look like a human
-    user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
-    await page.setUserAgent(user_agent)
+def main():
+    with sync_playwright() as p:
+        browser = p.firefox.launch(headless=False)
 
-    await page.setViewport({'width': 1280, 'height': 800})
+        # Set user agent to make it look like a human
+        # user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36'
 
-    await page.goto('https://chat.openai.com')
-    time.sleep(1)
+        # Create a new page with the specified user agent
+        page = browser.new_page()
 
-    # Fill out a form or interact with elements like a human
-    await page.click('/html/body/div[1]/div[1]/div[1]/div[4]/button[1]')
-    await type_like_human(page, '#username', 'my_username')
-    await type_like_human(page, '#password', 'my_password')
-    await asyncio.sleep(uniform(0.5, 1)) # Random pause before clicking
+        page.set_viewport_size({'width': 1280, 'height': 800})
 
-    # Click the login button
-    await page.click('#login-btn')
+        page.goto('https://chat.openai.com')
 
-    # Wait for the navigation to complete
-    await page.waitForNavigation()
+        page.wait_for_load_state('networkidle')
 
-    # Do other tasks after logging in...
+        cognitive_delay()
+        # Click sign in
 
-    await asyncio.sleep(10)
-    await browser.close()
 
-asyncio.run(main())
+        # enter username then press continue
+
+        # enter password then press continue
+
+
+
+        time.sleep(10)
+        browser.close()
+
+main()
